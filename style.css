@@ -1,0 +1,178 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* Sidebar styling */
+.sidebar {
+    background-color: #282828;
+    color: white;
+    width: 20%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+}
+
+.sidebar ul {
+    list-style: none;
+    width: 100%;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    padding: 10px;
+    text-align: center;
+}
+
+.sidebar ul li a:hover {
+    background-color: #1db954;
+    border-radius: 5px;
+}
+
+/* Main content styling */
+.main-content {
+    background-color: #ffffff;
+    width: 80%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Now playing section */
+.now-playing {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.album-art {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.song-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.song-info h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.song-info p {
+    font-size: 18px;
+    color: #777;
+}
+
+/* Playback controls */
+.playback-controls {
+    display: flex;
+    justify-content: space-around;
+    width: 500px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    background-color: #1db954;
+    color: white;
+    border: none;
+    font-size: 1000px;
+    padding: 100px 100px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.control-btn:hover {
+    background-color: #17a143;
+}
+
+/* Progress bar 
+.progress-container {
+    width: 100%;
+    background-color: #ddd;
+    height: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #ddd;
+}
+
+.progress {
+    width: 30%;
+    background-color: #1db954;
+    height: 100%;
+    transition: width 0.3s ease;
+} */
+
+/* Style for the progress bar container */
+.progress-bar {
+    width: 100%;
+    height: 20px;  /* Adjust height for visibility */
+    background-color: #ddd;
+    position: relative;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+/* Style for the progress bar itself */
+.progress {
+    height: 10%;
+    width: 20;  /* Initial width is 0 */
+    background-color: #76c7c0;  /* Color of the progress */
+    border-radius: 4px;
+}
+
+
+.dark-theme {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-theme .sidebar {
+    background-color: #333;
+}
+
+.dark-theme .main-content {
+    background-color: #222;
+}
+
+.dark-theme .control-btn {
+    background-color: #444;
+}
+
