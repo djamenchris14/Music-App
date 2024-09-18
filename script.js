@@ -130,6 +130,7 @@ browseTab.addEventListener('click', () => {
             if (selectedPlaylist) {
                 playlists[selectedPlaylist].push(song);
                 alert(`Added "${song.title}" to ${selectedPlaylist}`);
+                updatePlaylistTab(); // Update the Playlists tab whenever a song is added
             } else {
                 alert("Please select a playlist first!");
             }
@@ -144,6 +145,7 @@ browseTab.addEventListener('click', () => {
         if (playlistName && !playlists[playlistName]) {
             playlists[playlistName] = [];
             updatePlaylistSelect();
+            updatePlaylistTab(); // Update the Playlists tab whenever a new playlist is created
             alert(`Playlist "${playlistName}" created!`);
         } else {
             alert("Playlist name is either empty or already exists!");
@@ -164,10 +166,11 @@ browseTab.addEventListener('click', () => {
     updatePlaylistSelect();  // Initially populate the select dropdown
 });
 
-// Playlists tab - Display playlists
-playlistTab.addEventListener('click', () => {
-    mainContent.innerHTML = '<h2>Your Playlists</h2>';
+// Function to update the Playlists tab
+function updatePlaylistTab() {
     const playlistNames = Object.keys(playlists);
+    
+    mainContent.innerHTML = '<h2>Your Playlists</h2>';
     
     if (playlistNames.length === 0) {
         mainContent.innerHTML += '<p>No playlists available. Add some from the Browse tab!</p>';
@@ -177,7 +180,7 @@ playlistTab.addEventListener('click', () => {
             playlistDiv.innerHTML = `<h3>${playlist}</h3><ul id="${playlist}-songs"></ul>`;
             const playlistSongs = document.getElementById(`${playlist}-songs`);
             
-            playlists[playlist].forEach((song, index) => {
+            playlists[playlist].forEach((song) => {
                 const songItem = document.createElement('li');
                 songItem.textContent = `${song.title} - ${song.artist}`;
                 songItem.addEventListener('click', () => {
@@ -185,11 +188,16 @@ playlistTab.addEventListener('click', () => {
                     loadSong(songs[currentSongIndex]);
                     audioPlayer.play();
                 });
-                playlistSongs.appendChild(songItem);
+                playlistDiv.appendChild(songItem);
             });
             mainContent.appendChild(playlistDiv);
         });
     }
+}
+
+// Playlists tab - Display playlists when the tab is clicked
+playlistTab.addEventListener('click', () => {
+    updatePlaylistTab();
 });
 
 // Settings tab - Display settings
