@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "";  // Replace with your DB password
+$password = "";  
 $dbname = "music_app_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
