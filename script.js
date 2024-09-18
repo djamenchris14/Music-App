@@ -7,12 +7,15 @@ const songTitle = document.getElementById('song-title');
 const artistName = document.getElementById('artist-name');
 const albumArt = document.querySelector('.album-art');
 const progressBar = document.querySelector('.progress');
+
+// Navigation tab elements
+const homeTab = document.getElementById('home-tab');
 const browseTab = document.getElementById('browse-tab');
 const playlistTab = document.getElementById('playlist-tab');
 const settingsTab = document.getElementById('settings-tab');
 const mainContent = document.querySelector('.main-content');
 
-// Sample song data (title, artist, file source, and album art)
+// Sample song data
 const songs = [
     { title: "Don't Stop Til You Get Enough", artist: "Micheal Jackson", src: "Song_1.mp3", albumArt: "Album_art.jpg" },
     { title: "Dirty Diana", artist: "Micheal Jackson", src: "Song_2.mp3", albumArt: "Album_art.jpg" },
@@ -28,7 +31,7 @@ let currentSongIndex = 0;
 // Load the initial song
 loadSong(songs[currentSongIndex]);
 
-// Function to load a song's data (title, artist, album art, and audio source)
+// Function to load a song's data
 function loadSong(song) {
     songTitle.textContent = song.title;
     artistName.textContent = song.artist;
@@ -41,10 +44,10 @@ function loadSong(song) {
 playPauseBtn.addEventListener('click', () => {
     if (audioPlayer.paused) {
         audioPlayer.play();
-        playPauseBtn.textContent = '⏸'; // Switch to pause icon
+        playPauseBtn.textContent = '⏸';
     } else {
         audioPlayer.pause();
-        playPauseBtn.textContent = '⏯'; // Switch back to play icon
+        playPauseBtn.textContent = '⏯';
     }
 });
 
@@ -52,49 +55,50 @@ playPauseBtn.addEventListener('click', () => {
 prevTrackBtn.addEventListener('click', () => {
     currentSongIndex--;
     if (currentSongIndex < 0) {
-        currentSongIndex = songs.length - 1; // Loop to last song if at the first song
+        currentSongIndex = songs.length - 1;
     }
     loadSong(songs[currentSongIndex]);
     audioPlayer.play();
-    playPauseBtn.textContent = '⏸'; // Set to pause icon when song plays
+    playPauseBtn.textContent = '⏸';
 });
 
 // Play the next track
 nextTrackBtn.addEventListener('click', () => {
     currentSongIndex++;
     if (currentSongIndex >= songs.length) {
-        currentSongIndex = 0; // Loop to first song if at the last song
+        currentSongIndex = 0;
     }
     loadSong(songs[currentSongIndex]);
     audioPlayer.play();
-    playPauseBtn.textContent = '⏸'; // Set to pause icon when song plays
+    playPauseBtn.textContent = '⏸';
 });
-
-/*
-// Update the progress bar as the song plays
-audioPlayer.addEventListener('timeupdate', () => {
-    const { duration, currentTime } = audioPlayer;
-    const progressPercent = (currentTime / duration) * 100;
-    progressBar.style.width = `${progressPercent}%`;
-});
-*/
 
 // Update the progress bar as the song plays
 audioPlayer.addEventListener('timeupdate', () => {
     const { duration, currentTime } = audioPlayer;
-    
-    // Check if the duration is valid (not NaN)
     if (!isNaN(duration)) {
         const progressPercent = (currentTime / duration) * 100;
         progressBar.style.width = `${progressPercent}%`;
     }
 });
 
-
-
-// When the song ends, automatically play the next track
+// When the song ends, play the next track
 audioPlayer.addEventListener('ended', () => {
-    nextTrackBtn.click(); // Simulate clicking the next track button
+    nextTrackBtn.click();
+});
+
+// Home tab - Display welcome message
+homeTab.addEventListener('click', () => {
+    mainContent.innerHTML = `
+        <div class="now-playing">
+            <img src="Album_art.jpg" alt="Album Art" class="album-art">
+            <div class="song-info">
+                <h1 id="song-title">Song Title</h1>
+                <p id="artist-name">Artist Name</p>
+            </div>
+        </div>
+    `;
+    loadSong(songs[currentSongIndex]);
 });
 
 // Browse tab - Display songs to browse
@@ -109,96 +113,51 @@ browseTab.addEventListener('click', () => {
             currentSongIndex = index;
             loadSong(songs[currentSongIndex]);
             audioPlayer.play();
-            playPauseBtn.textContent = '⏸';
         });
         songList.appendChild(songItem);
     });
 });
 
-// Playlist tab - Create and manage playlists
+// Playlists tab - Display playlists
 playlistTab.addEventListener('click', () => {
-    mainContent.innerHTML = `
-        <h2>Playlists</h2>
-        <input type="text" id="new-playlist-name" placeholder="New Playlist Name">
-        <button id="create-playlist-btn">Create Playlist</button>
-        <div id="playlists-container"></div>
-    `;
+    mainContent.innerHTML = '<h2>Your Playlists</h2>';
+    const playlistNames = Object.keys(playlists);
     
-    const createPlaylistBtn = document.getElementById('create-playlist-btn');
-    const playlistsContainer = document.getElementById('playlists-container');
-    
-    createPlaylistBtn.addEventListener('click', () => {
-        const playlistName = document.getElementById('new-playlist-name').value;
-        if (playlistName && !playlists[playlistName]) {
-            playlists[playlistName] = [];
+    if (playlistNames.length === 0) {
+        mainContent.innerHTML += '<p>No playlists available. Add some from Browse tab!</p>';
+    } else {
+        playlistNames.forEach((playlist) => {
             const playlistDiv = document.createElement('div');
-            playlistDiv.classList.add('playlist');
-            playlistDiv.innerHTML = `<h3>${playlistName}</h3><ul id="playlist-${playlistName}"></ul><button class="add-song-btn">Add Songs</button>`;
-            playlistsContainer.appendChild(playlistDiv);
+            playlistDiv.innerHTML = `<h3>${playlist}</h3><ul id="${playlist}-songs"></ul>`;
+            const playlistSongs = document.getElementById(`${playlist}-songs`);
             
-            const addSongBtn = playlistDiv.querySelector('.add-song-btn');
-            addSongBtn.addEventListener('click', () => {
-                displayAddSongsToPlaylist(playlistName);
+            playlists[playlist].forEach((song, index) => {
+                const songItem = document.createElement('li');
+                songItem.textContent = `${song.title} - ${song.artist}`;
+                songItem.addEventListener('click', () => {
+                    currentSongIndex = songs.indexOf(song);
+                    loadSong(songs[currentSongIndex]);
+                    audioPlayer.play();
+                });
+                playlistSongs.appendChild(songItem);
             });
-        }
-    });
+            mainContent.appendChild(playlistDiv);
+        });
+    }
 });
 
-// Function to display songs to add to a playlist
-function displayAddSongsToPlaylist(playlistName) {
-    mainContent.innerHTML = `<h2>Add Songs to ${playlistName}</h2><ul id="add-song-list"></ul>`;
-    const addSongList = document.getElementById('add-song-list');
-    
-    songs.forEach((song, index) => {
-        const songItem = document.createElement('li');
-        songItem.textContent = `${song.title} - ${song.artist}`;
-        songItem.addEventListener('click', () => {
-            playlists[playlistName].push(songs[index]);
-            updatePlaylistUI(playlistName);
-            playlistTab.click();
-        });
-        addSongList.appendChild(songItem);
-    });
-}
-
-// Function to update playlist UI
-function updatePlaylistUI(playlistName) {
-    const playlistUl = document.getElementById(`playlist-${playlistName}`);
-    playlistUl.innerHTML = '';
-    
-    playlists[playlistName].forEach((song, index) => {
-        const playlistSongItem = document.createElement('li');
-        playlistSongItem.textContent = `${song.title} - ${song.artist}`;
-        playlistSongItem.addEventListener('click', () => {
-            currentSongIndex = songs.indexOf(song);
-            loadSong(songs[currentSongIndex]);
-            audioPlayer.play();
-            playPauseBtn.textContent = '⏸';
-        });
-        
-        const removeSongBtn = document.createElement('button');
-        removeSongBtn.textContent = 'Remove';
-        removeSongBtn.addEventListener('click', () => {
-            playlists[playlistName].splice(index, 1);
-            updatePlaylistUI(playlistName);
-        });
-        
-        playlistSongItem.appendChild(removeSongBtn);
-        playlistUl.appendChild(playlistSongItem);
-    });
-}
-
-// Settings tab - Theme toggler
+// Settings tab - Display settings
 settingsTab.addEventListener('click', () => {
     mainContent.innerHTML = `
         <h2>Settings</h2>
-        <button id="toggle-theme-btn">Toggle Dark/Light Theme</button>
+        <div>
+            <label for="theme-toggle">Dark Theme</label>
+            <input type="checkbox" id="theme-toggle">
+        </div>
     `;
-    
-    const toggleThemeBtn = document.getElementById('toggle-theme-btn');
-    toggleThemeBtn.addEventListener('click', () => {
+
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('change', () => {
         document.body.classList.toggle('dark-theme');
     });
 });
-
-
