@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login page if the user is not logged in
+    header("Location: ../authenticationforms/login.html");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,8 +53,8 @@
 
     <audio id="audio-player"></audio>
     <script src="script.js"></script>
-
-    
-    
 </body>
 </html>
+
+
+
