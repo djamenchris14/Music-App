@@ -200,13 +200,143 @@ playlistTab.addEventListener('click', () => {
     updatePlaylistTab();
 });
 
+/// Function to update the UI language based on the selected language
+function updateLanguage(language) {
+    const translations = {
+        en: {
+            settings: "Settings",
+            darkTheme: "Dark Theme",
+            brightness: "Brightness",
+            language: "Language",
+            selectLanguage: "Select Language",
+            browseSongs: "Browse Songs",
+            createPlaylist: "Create Playlist",
+            availablePlaylists: "Available Playlists",
+            yourPlaylists: "Your Playlists",
+            noPlaylists: "No playlists available. Add some from the Browse tab!",
+            enterPlaylistName: "Enter playlist name",
+            selectPlaylist: "Select a playlist",
+            homeTab: "Home",
+            browseTab: "Browse",
+            playlistTab: "Playlists",
+            settingsTab: "Settings"
+        },
+        fr: {
+            settings: "Paramètres",
+            darkTheme: "Thème Sombre",
+            brightness: "Luminosité",
+            language: "Langue",
+            selectLanguage: "Sélectionner la langue",
+            browseSongs: "Parcourir les chansons",
+            createPlaylist: "Créer une playlist",
+            availablePlaylists: "Playlists Disponibles",
+            yourPlaylists: "Vos playlists",
+            noPlaylists: "Aucune playlist disponible. Ajoutez-en depuis l'onglet Parcourir !",
+            enterPlaylistName: "Entrez le nom de la playlist",
+            selectPlaylist: "Sélectionnez une playlist",
+            homeTab: "Accueil",
+            browseTab: "Parcourir",
+            playlistTab: "Playlists",
+            settingsTab: "Paramètres"
+        },
+        es: {
+            settings: "Ajustes",
+            darkTheme: "Tema Oscuro",
+            brightness: "Brillo",
+            language: "Idioma",
+            selectLanguage: "Seleccionar Idioma",
+            browseSongs: "Explorar Canciones",
+            createPlaylist: "Crear Lista de Reproducción",
+            availablePlaylists: "Listas de Reproducción Disponibles",
+            yourPlaylists: "Tus Listas de Reproducción",
+            noPlaylists: "No hay listas de reproducción disponibles. ¡Añade algunas desde la pestaña Explorar!",
+            enterPlaylistName: "Ingrese el nombre de la lista de reproducción",
+            selectPlaylist: "Seleccionar una lista de reproducción",
+            homeTab: "Inicio",
+            browseTab: "Explorar",
+            playlistTab: "Listas de Reproducción",
+            settingsTab: "Ajustes"
+        },
+        // Add more languages as needed
+    };
+
+    const lang = translations[language];
+
+    document.querySelector('#settings-title').textContent = lang.settings;
+    document.querySelector('#theme-label').textContent = lang.darkTheme;
+    document.querySelector('#brightness-label').textContent = lang.brightness;
+    document.querySelector('#language-label').textContent = lang.language;
+    document.querySelector('#language-select-label').textContent = lang.selectLanguage;
+
+    updateBrowseTabLanguage(language);
+    updatePlaylistsTabLanguage(language);
+    updateTabsLanguage(language);
+}
+
+// Function to handle language change in Browse tab
+function updateBrowseTabLanguage(language) {
+    const lang = translations[language];
+    document.querySelector('.main-content').innerHTML = `
+        <h2>${lang.browseSongs}</h2>
+        <ul id="song-list"></ul>
+        <h3>${lang.createPlaylist}</h3>
+        <form id="create-playlist-form">
+            <input type="text" id="playlist-name" placeholder="${lang.enterPlaylistName}" required>
+            <button type="submit">${lang.createPlaylist}</button>
+        </form>
+        <h3>${lang.availablePlaylists}</h3>
+        <select id="playlist-select">
+            <option value="" disabled selected>${lang.selectPlaylist}</option>
+        </select>
+    `;
+}
+
+// Function to handle language change in Playlists tab
+function updatePlaylistsTabLanguage(language) {
+    const lang = translations[language];
+    document.querySelector('.main-content').innerHTML = `
+        <h2>${lang.yourPlaylists}</h2>
+    `;
+    if (Object.keys(playlists).length === 0) {
+        document.querySelector('.main-content').innerHTML += `<p>${lang.noPlaylists}</p>`;
+    } else {
+        Object.keys(playlists).forEach((playlist) => {
+            const playlistDiv = document.createElement('div');
+            playlistDiv.innerHTML = `<h3>${playlist}</h3><ul id="${playlist}-songs"></ul>`;
+            document.querySelector('.main-content').appendChild(playlistDiv);
+        });
+    }
+}
+
+// Update tabs with translations
+function updateTabsLanguage(language) {
+    const lang = translations[language];
+    document.getElementById('home-tab').textContent = lang.homeTab || "Home";
+    document.getElementById('browse-tab').textContent = lang.browseTab || "Browse";
+    document.getElementById('playlist-tab').textContent = lang.playlistTab || "Playlists";
+    document.getElementById('settings-tab').textContent = lang.settingsTab || "Settings";
+}
+
 // Settings tab - Display settings
 settingsTab.addEventListener('click', () => {
     mainContent.innerHTML = `
-        <h2>Settings</h2>
+        <h2 id="settings-title">Settings</h2>
         <div>
-            <label for="theme-toggle">Dark Theme</label>
+            <label for="theme-toggle" id="theme-label">Dark Theme</label>
             <input type="checkbox" id="theme-toggle">
+        </div>
+        <div>
+            <label for="brightness-slider" id="brightness-label">Brightness</label>
+            <input type="range" id="brightness-slider" min="50" max="150" value="100">
+        </div>
+        <div>
+            <label for="language-select" id="language-label">Language</label>
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="fr">French</option>
+                <option value="es">Spanish</option>
+                <!-- Add more languages here -->
+            </select>
         </div>
     `;
 
@@ -214,4 +344,18 @@ settingsTab.addEventListener('click', () => {
     themeToggle.addEventListener('change', () => {
         document.body.classList.toggle('dark-theme');
     });
+
+    const brightnessSlider = document.getElementById('brightness-slider');
+    brightnessSlider.addEventListener('input', (event) => {
+        const brightnessValue = event.target.value;
+        document.body.style.filter = `brightness(${brightnessValue}%)`;
+    });
+
+    const languageSelect = document.getElementById('language-select');
+    languageSelect.addEventListener('change', (event) => {
+        const selectedLanguage = event.target.value;
+        updateLanguage(selectedLanguage);
+    });
 });
+
+
