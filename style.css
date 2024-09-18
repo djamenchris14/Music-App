@@ -97,67 +97,42 @@ body {
     color: #777;
 }
 
-/* Playback controls */
-.playback-controls {
+/* Player controls */
+.player-controls {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 500px;
     margin-bottom: 20px;
 }
 
-.control-btn {
+button {
     background-color: #1db954;
     color: white;
     border: none;
-    font-size: 1000px;
-    padding: 100px 100px;
-    border-radius: 50px;
+    padding: 10px 20px;
     cursor: pointer;
 }
 
-.control-btn:hover {
+button:hover {
     background-color: #17a143;
 }
 
-/* Progress bar 
-.progress-container {
+/* Progress bar styling */
+.progress-bar {
     width: 100%;
+    height: 10px;
     background-color: #ddd;
-    height: 5px;
     border-radius: 5px;
     overflow: hidden;
-}
-
-.progress-bar {
-    width: 100%;
-    background-color: #ddd;
-}
-
-.progress {
-    width: 30%;
-    background-color: #1db954;
-    height: 100%;
-    transition: width 0.3s ease;
-} */
-
-/* Style for the progress bar container */
-.progress-bar {
-    width: 100%;
-    height: 20px;  /* Adjust height for visibility */
-    background-color: #ddd;
-    position: relative;
     margin-top: 10px;
-    border-radius: 4px;
 }
 
-/* Style for the progress bar itself */
 .progress {
-    height: 10%;
-    width: 20;  /* Initial width is 0 */
-    background-color: #76c7c0;  /* Color of the progress */
-    border-radius: 4px;
+    height: 100%;
+    width: 0;
+    background-color: #1db954;
+    transition: width 0.3s ease;
 }
-
 
 .dark-theme {
     background-color: #121212;
