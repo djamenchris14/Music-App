@@ -19,7 +19,9 @@ const mainContent = document.querySelector('.main-content');
 const songs = [
     { title: "Don't Stop Til You Get Enough", artist: "Michael Jackson", src: "Song_1.mp3", albumArt: "Album_art.jpg" },
     { title: "Dirty Diana", artist: "Michael Jackson", src: "Song_2.mp3", albumArt: "Album_art.jpg" },
-    { title: "Thriller", artist: "Michael Jackson", src: "Song_3.mp3", albumArt: "Album_art.jpg" }
+    { title: "Thriller", artist: "Michael Jackson", src: "Song_3.mp3", albumArt: "Album_art.jpg" },
+    { title: "Escanor Lion sin of pride", artist: "Pureojuice", src: "Song_4.mp3", albumArt: "escanor.jpg"},
+    { title: "Albert gnatta", artist: "4X4 Tout terrain", src: "Song_5.mp3", albumArt: "4X4.jpg"}
 ];
 
 // Playlist object to store playlists
@@ -377,6 +379,7 @@ settingsTab.addEventListener('click', () => {
     mainContent.innerHTML = `
         <h2 id="settings-title">Settings</h2>
         <div>
+        <p>
             <label for="theme-toggle" id="theme-label">Dark Theme</label>
             <input type="checkbox" id="theme-toggle">
         </div>
@@ -393,6 +396,10 @@ settingsTab.addEventListener('click', () => {
                 <!-- Add more languages here -->
             </select>
         </div>
+         <div>
+            <label for="volume-slider" id="volume-label">Volume</label>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+        </div></p>
     `;
 
     const themeToggle = document.getElementById('theme-toggle');
@@ -410,6 +417,12 @@ settingsTab.addEventListener('click', () => {
     languageSelect.addEventListener('change', (event) => {
         const selectedLanguage = event.target.value;
         updateLanguage(selectedLanguage);
+    });
+
+    // Add event listener for the volume slider
+    const volumeSlider = document.getElementById('volume-slider');
+    volumeSlider.addEventListener('input', (event) => {
+        audioPlayer.volume = event.target.value; // Set volume of the audio player
     });
 });
 
