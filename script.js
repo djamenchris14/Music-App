@@ -87,22 +87,87 @@ audioPlayer.addEventListener('ended', () => {
     nextTrackBtn.click();
 });
 
-// Home tab - Display welcome message
-homeTab.addEventListener('click', () => {
+// Home tab - Update the UI for the Home tab
+function showHomeContent() {
+    // Load the current song details into the UI
+    const currentSong = songs[currentSongIndex]; // Get the current song from the songs array
+
     mainContent.innerHTML = `
+        <!-- Now Playing Section -->
         <div class="now-playing">
-            <img src="Album_art.jpg" alt="Album Art" class="album-art">
+            <img src="${currentSong.albumArt}" alt="Album Art" class="album-art">
             <div class="song-info">
-                <h1 id="song-title">Song Title</h1>
-                <p id="artist-name">Artist Name</p>
+                <h1 id="song-title">${currentSong.title}</h1>
+                <p id="artist-name">${currentSong.artist}</p>
+            </div>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="player-controls">
+            <button id="prev-track">⏮</button>
+            <button id="play-pause">⏯</button>
+            <button id="next-track">⏭</button>
+            <div class="progress-bar">
+                <div class="progress"></div>
             </div>
         </div>
     `;
-    loadSong(songs[currentSongIndex]);
-});
 
-// Browse tab - Display songs to browse and allow users to add songs to playlists
-browseTab.addEventListener('click', () => {
+    // Reattach event listeners for playback controls
+    document.getElementById('play-pause').addEventListener('click', () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playPauseBtn.textContent = '⏸';
+        } else {
+            audioPlayer.pause();
+            playPauseBtn.textContent = '⏯';
+        }
+    });
+
+    document.getElementById('prev-track').addEventListener('click', () => {
+        currentSongIndex--;
+        if (currentSongIndex < 0) {
+            currentSongIndex = songs.length - 1;
+        }
+        loadSong(songs[currentSongIndex]);
+        showHomeContent(); // Refresh Home content with new song info
+        audioPlayer.play();
+        playPauseBtn.textContent = '⏸';
+    });
+
+    document.getElementById('next-track').addEventListener('click', () => {
+        currentSongIndex++;
+        if (currentSongIndex >= songs.length) {
+            currentSongIndex = 0;
+        }
+        loadSong(songs[currentSongIndex]);
+        showHomeContent(); // Refresh Home content with new song info
+        audioPlayer.play();
+        playPauseBtn.textContent = '⏸';
+    });
+
+    // Reinitialize the progress bar
+    const progress = document.querySelector('.progress');
+    audioPlayer.addEventListener('timeupdate', () => {
+        const { duration, currentTime } = audioPlayer;
+        if (!isNaN(duration)) {
+            const progressPercent = (currentTime / duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+        }
+    });
+
+    // Handle song end
+    audioPlayer.addEventListener('ended', () => {
+        document.getElementById('next-track').click();
+    });
+}
+
+// Call showHomeContent to initialize the Home tab
+showHomeContent();
+
+
+// Function to update Browse tab content
+function showBrowseSongsContent() {
     mainContent.innerHTML = `
         <h2>Browse Songs</h2>
         <ul id="song-list"></ul>
@@ -121,7 +186,7 @@ browseTab.addEventListener('click', () => {
     const createPlaylistForm = document.getElementById('create-playlist-form');
     const playlistSelect = document.getElementById('playlist-select');
 
-    // Display songs and allow users to add them to the selected playlist
+    // Display songs
     songs.forEach((song, index) => {
         const songItem = document.createElement('li');
         songItem.textContent = `${song.title} - ${song.artist}`;
@@ -164,9 +229,9 @@ browseTab.addEventListener('click', () => {
     }
 
     updatePlaylistSelect();  // Initially populate the select dropdown
-});
+}
 
-// Function to update the Playlists tab
+// Function to update Playlist tab content
 function updatePlaylistTab() {
     const playlistNames = Object.keys(playlists);
     
@@ -178,29 +243,19 @@ function updatePlaylistTab() {
         playlistNames.forEach((playlist) => {
             const playlistDiv = document.createElement('div');
             playlistDiv.innerHTML = `<h3>${playlist}</h3><ul id="${playlist}-songs"></ul>`;
-            const playlistSongs = document.getElementById(`${playlist}-songs`);
+            mainContent.appendChild(playlistDiv);
             
+            const playlistSongList = document.getElementById(`${playlist}-songs`);
             playlists[playlist].forEach((song) => {
                 const songItem = document.createElement('li');
                 songItem.textContent = `${song.title} - ${song.artist}`;
-                songItem.addEventListener('click', () => {
-                    currentSongIndex = songs.indexOf(song);
-                    loadSong(songs[currentSongIndex]);
-                    audioPlayer.play();
-                });
-                playlistDiv.appendChild(songItem);
+                playlistSongList.appendChild(songItem);
             });
-            mainContent.appendChild(playlistDiv);
         });
     }
 }
 
-// Playlists tab - Display playlists when the tab is clicked
-playlistTab.addEventListener('click', () => {
-    updatePlaylistTab();
-});
-
-/// Function to update the UI language based on the selected language
+//// Function to update the UI language based on the selected language
 function updateLanguage(language) {
     const translations = {
         en: {
@@ -359,3 +414,22 @@ settingsTab.addEventListener('click', () => {
 });
 
 
+// Initial display of the Home tab content
+showHomeContent();
+
+// Event listeners for tab navigation
+homeTab.addEventListener('click', () => {
+    showHomeContent();
+});
+
+browseTab.addEventListener('click', () => {
+    showBrowseSongsContent();
+});
+
+playlistTab.addEventListener('click', () => {
+    updatePlaylistTab();
+});
+
+settingsTab.addEventListener('click', () => {
+    showSettingsContent();
+});
