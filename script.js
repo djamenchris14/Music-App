@@ -17,12 +17,12 @@ const mainContent = document.querySelector('.main-content');
 
 // Sample song data
 const songs = [
-    { title: "Don't Stop Til You Get Enough", artist: "Micheal Jackson", src: "Song_1.mp3", albumArt: "Album_art.jpg" },
-    { title: "Dirty Diana", artist: "Micheal Jackson", src: "Song_2.mp3", albumArt: "Album_art.jpg" },
-    { title: "Thriller", artist: "Micheal Jackson", src: "Song_3.mp3", albumArt: "Album_art.jpg" }
+    { title: "Don't Stop Til You Get Enough", artist: "Michael Jackson", src: "Song_1.mp3", albumArt: "Album_art.jpg" },
+    { title: "Dirty Diana", artist: "Michael Jackson", src: "Song_2.mp3", albumArt: "Album_art.jpg" },
+    { title: "Thriller", artist: "Michael Jackson", src: "Song_3.mp3", albumArt: "Album_art.jpg" }
 ];
 
-// Playlist object
+// Playlist object to store playlists
 let playlists = {};
 
 // Track the current song index
@@ -101,21 +101,67 @@ homeTab.addEventListener('click', () => {
     loadSong(songs[currentSongIndex]);
 });
 
-// Browse tab - Display songs to browse
+// Browse tab - Display songs to browse and allow users to add songs to playlists
 browseTab.addEventListener('click', () => {
-    mainContent.innerHTML = '<h2>Browse Songs</h2><ul id="song-list"></ul>';
+    mainContent.innerHTML = `
+        <h2>Browse Songs</h2>
+        <ul id="song-list"></ul>
+        <h3>Create Playlist</h3>
+        <form id="create-playlist-form">
+            <input type="text" id="playlist-name" placeholder="Enter playlist name" required>
+            <button type="submit">Create Playlist</button>
+        </form>
+        <h3>Available Playlists</h3>
+        <select id="playlist-select">
+            <option value="" disabled selected>Select a playlist</option>
+        </select>
+    `;
+
     const songList = document.getElementById('song-list');
-    
+    const createPlaylistForm = document.getElementById('create-playlist-form');
+    const playlistSelect = document.getElementById('playlist-select');
+
+    // Display songs and allow users to add them to the selected playlist
     songs.forEach((song, index) => {
         const songItem = document.createElement('li');
         songItem.textContent = `${song.title} - ${song.artist}`;
         songItem.addEventListener('click', () => {
-            currentSongIndex = index;
-            loadSong(songs[currentSongIndex]);
-            audioPlayer.play();
+            const selectedPlaylist = playlistSelect.value;
+            if (selectedPlaylist) {
+                playlists[selectedPlaylist].push(song);
+                alert(`Added "${song.title}" to ${selectedPlaylist}`);
+            } else {
+                alert("Please select a playlist first!");
+            }
         });
         songList.appendChild(songItem);
     });
+
+    // Handle playlist creation
+    createPlaylistForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const playlistName = document.getElementById('playlist-name').value.trim();
+        if (playlistName && !playlists[playlistName]) {
+            playlists[playlistName] = [];
+            updatePlaylistSelect();
+            alert(`Playlist "${playlistName}" created!`);
+        } else {
+            alert("Playlist name is either empty or already exists!");
+        }
+    });
+
+    // Function to update the playlist dropdown
+    function updatePlaylistSelect() {
+        playlistSelect.innerHTML = '<option value="" disabled selected>Select a playlist</option>';
+        Object.keys(playlists).forEach((playlist) => {
+            const option = document.createElement('option');
+            option.value = playlist;
+            option.textContent = playlist;
+            playlistSelect.appendChild(option);
+        });
+    }
+
+    updatePlaylistSelect();  // Initially populate the select dropdown
 });
 
 // Playlists tab - Display playlists
@@ -124,7 +170,7 @@ playlistTab.addEventListener('click', () => {
     const playlistNames = Object.keys(playlists);
     
     if (playlistNames.length === 0) {
-        mainContent.innerHTML += '<p>No playlists available. Add some from Browse tab!</p>';
+        mainContent.innerHTML += '<p>No playlists available. Add some from the Browse tab!</p>';
     } else {
         playlistNames.forEach((playlist) => {
             const playlistDiv = document.createElement('div');
